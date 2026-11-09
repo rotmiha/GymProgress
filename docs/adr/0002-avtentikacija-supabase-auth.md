@@ -50,9 +50,3 @@ prijavne podatke upravlja Supabase Auth.
   med identitetami ter aplikacijskimi profili.
 * Še vedno moramo pravilno preverjati žetone, obravnavati potek sej in
   preprečiti, da bi uporabnik sam pridobil administratorsko vlogo.
-
-## Povezave
-
-* Izhodišče: [arhitektura](../04-arhitektura-in-tehnoloski-sklad.md) in [US-01](../05-uporabniske-zgodbe.md#us-01--registracija-in-prijava).
-* Podatki: [aplikacijski uporabniški profil](../03-podatkovni-model.md).
-* Sorodno: [ADR 0001 – Supabase](0001-gostovana-baza-supabase.md) in [ADR 0008 – pravila dostopa](0008-dostop-po-vlogah-in-povezavah.md).

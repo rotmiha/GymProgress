@@ -51,8 +51,3 @@ omogočata skupno osnovno razvojno okolje za frontend in backend.
 * Ločen backend sam po sebi ne prepreči obhoda prek podatkovnih vmesnikov;
   pri izvedbi moramo uskladiti tudi dostopne pravice v Supabase in
   zagotoviti, da privilegirane poverilnice ostanejo na strežniku.
-
-## Povezave
-
-* Izhodišče: [arhitektura](../04-arhitektura-in-tehnoloski-sklad.md) in [US-04 do US-07](../05-uporabniske-zgodbe.md).
-* Sorodno: [ADR 0004 – REST API](0004-komunikacija-prek-rest-api.md), [ADR 0006 – zaključek treninga](0006-izracuni-ob-zakljucku-treninga.md) in [ADR 0008 – pravila dostopa](0008-dostop-po-vlogah-in-povezavah.md).

@@ -43,9 +43,8 @@ flowchart TD
 - **[Ločen Express backend (ADR 0003)](adr/0003-locen-express-backend.md):** poslovna pravila in preverjanje dostopov ostanejo na strežniku.
 - **[REST API (ADR 0004)](adr/0004-komunikacija-prek-rest-api.md):** enostavno testiranje s Postmanom in možnost kasnejše mobilne aplikacije.
 - **[Relacijski model (ADR 0005)](adr/0005-relacijski-podatkovni-model.md):** zagotavlja povezave med uporabniki, programi, vajami in treningi.
-- **[Izračuni ob zaključku treninga (ADR 0006)](adr/0006-izracuni-ob-zakljucku-treninga.md):** volumen in osebni rekordi temeljijo na dejansko opravljenih serijah.
-- **[React in TypeScript (ADR 0007)](adr/0007-react-typescript-frontend.md):** komponente podpirajo interaktivno urejanje programov in beleženje serij.
-- **[Dostop po vlogah in povezavah (ADR 0008)](adr/0008-dostop-po-vlogah-in-povezavah.md):** backend preverja vlogo, lastništvo in potrjeno povezavo trener–stranka.
+- **[React in TypeScript (ADR 0007)](adr/0006-react-typescript-frontend.md):** komponente podpirajo interaktivno urejanje programov in beleženje serij.
+- **[Dostop po vlogah in povezavah (ADR 0008)](adr/0007-dostop-po-vlogah-in-povezavah.md):** backend preverja vlogo, lastništvo in potrjeno povezavo trener–stranka.
 
 Celotne utemeljitve, alternative, posledice ter navodila za dodajanje in
 nadomeščanje odločitev so v [kazalu ADR](adr/README.md).

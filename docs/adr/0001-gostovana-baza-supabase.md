@@ -47,9 +47,3 @@ naročniškega paketa ali načina produkcijske namestitve aplikacije.
   od Supabaseovih vmesnikov za storitve zunaj samega PostgreSQL.
 * Upravljana storitev ne odpravi odgovornosti za shemo, dostopne pravice,
   migracije in preverjanje možnosti obnovitve podatkov.
-
-## Povezave
-
-* Izhodišče: [arhitektura in tehnološki sklad](../04-arhitektura-in-tehnoloski-sklad.md).
-* Sorodno: [ADR 0002 – Supabase Auth](0002-avtentikacija-supabase-auth.md).
-* Sorodno: [ADR 0005 – relacijski podatkovni model](0005-relacijski-podatkovni-model.md).
