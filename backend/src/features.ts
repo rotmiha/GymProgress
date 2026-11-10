@@ -48,5 +48,27 @@ export function featureRoutes() {
       await client(res).rpc('save_program', { payload: req.body, program: req.params.id }),
     );
   });
+  router.get('/connections', async (_req, res) => {
+    databaseResponse(res, await client(res).rpc('list_connections'));
+  });
+  router.post('/connections', async (req, res) => {
+    databaseResponse(
+      res,
+      await client(res).rpc('invite_client', { email_address: req.body?.email }),
+      201,
+    );
+  });
+  router.patch('/connections/:id', async (req, res) => {
+    databaseResponse(
+      res,
+      await client(res).rpc('respond_invitation', {
+        invitation: req.params.id,
+        decision: req.body?.status,
+      }),
+    );
+  });
+  router.get('/clients/:id', async (req, res) => {
+    databaseResponse(res, await client(res).rpc('get_client_profile', { client: req.params.id }));
+  });
   return router;
 }

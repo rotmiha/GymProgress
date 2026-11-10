@@ -64,11 +64,9 @@ export function createApp(clientForToken: (token: string) => SupabaseClient) {
       _next: express.NextFunction,
     ) => {
       const invalid = error.status === 400 || error.status === 413;
-      res
-        .status(invalid ? error.status! : 503)
-        .json({
-          error: invalid ? 'Neveljavna ali prevelika zahteva.' : 'Storitev trenutno ni dosegljiva.',
-        });
+      res.status(invalid ? error.status! : 503).json({
+        error: invalid ? 'Neveljavna ali prevelika zahteva.' : 'Storitev trenutno ni dosegljiva.',
+      });
     },
   );
   return app;
