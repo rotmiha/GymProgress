@@ -23,3 +23,11 @@ Preverjanje na gostovanem Supabase z resničnimi računi je ločen ročni korak.
 - Kot stranka v ločenem brskalniku povabilo sprejmite ali zavrnite.
 - Po sprejemu trener lahko prebere profil. Po zavrnitvi ga ne more.
 - Nepovezan trener in druga stranka ne moreta sprejeti tujega povabila.
+
+## US-04 – dodelitve (#9, #10)
+
+- Trener v Dodelitvah izbere lasten program in potrjeno stranko.
+- Pred potrditvijo vidi program z vajami in podatke prejemnika.
+- Stranka po osvežitvi vidi dodeljeni program v Dodelitvah in Programih.
+- Čakajoča povezava ne omogoči dodelitve. Drug račun ne vidi dodeljenega programa.
+- Ponovitev dodelitve istega programa isti stranki ne ustvari dvojnikov.

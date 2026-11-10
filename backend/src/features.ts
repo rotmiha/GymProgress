@@ -70,5 +70,24 @@ export function featureRoutes() {
   router.get('/clients/:id', async (req, res) => {
     databaseResponse(res, await client(res).rpc('get_client_profile', { client: req.params.id }));
   });
+  router.get('/assignments', async (_req, res) => {
+    databaseResponse(
+      res,
+      await client(res)
+        .from('program_assignments')
+        .select('*,workout_programs(*,program_exercises(*,exercises(*)))')
+        .order('assigned_at', { ascending: false }),
+    );
+  });
+  router.post('/assignments', async (req, res) => {
+    databaseResponse(
+      res,
+      await client(res).rpc('assign_program', {
+        program: req.body?.program_id,
+        trainee: req.body?.trainee_id,
+      }),
+      201,
+    );
+  });
   return router;
 }
