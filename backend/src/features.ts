@@ -94,7 +94,7 @@ export function featureRoutes() {
       res,
       await client(res)
         .from('workout_sessions')
-        .select('*,workout_sets(*)')
+        .select('*,workout_sets(*),workout_records(*,exercises(name))')
         .eq('trainee_id', res.locals.profile.id)
         .order('started_at', { ascending: false })
         .limit(50),
@@ -110,7 +110,7 @@ export function featureRoutes() {
       res,
       await client(res)
         .from('workout_sessions')
-        .select('*,workout_sets(*)')
+        .select('*,workout_sets(*),workout_records(*,exercises(name))')
         .eq('trainee_id', req.params.id)
         .order('started_at', { ascending: false })
         .limit(50),

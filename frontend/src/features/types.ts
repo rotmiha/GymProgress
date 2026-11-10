@@ -7,6 +7,13 @@ export type WorkoutSet = {
   weight_kg: number;
 };
 export type WorkoutSession = {
+  workout_records?: {
+    id: string;
+    exercise_id: string;
+    weight_kg: number;
+    previous_weight_kg: number | null;
+    exercises: { name: string };
+  }[];
   id: string;
   trainee_id: string;
   program_name: string;

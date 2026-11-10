@@ -4,7 +4,13 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { createApp } from '../src/app';
 
 function setup(
-  options: { invalid?: boolean; missing?: boolean; dbError?: boolean; offline?: boolean } = {},
+  options: {
+    invalid?: boolean;
+    missing?: boolean;
+    dbError?: boolean;
+    offline?: boolean;
+    authUnavailable?: boolean;
+  } = {},
 ) {
   const profile = { id: 'user-a', email: 'a@example.com', role: 'stranka' };
   const eq = vi.fn().mockReturnValue({
@@ -17,7 +23,11 @@ function setup(
     if (options.offline) throw new Error('unavailable');
     return {
       data: { user: options.invalid ? null : { id: 'user-a' } },
-      error: options.invalid ? {} : null,
+      error: options.authUnavailable
+        ? { status: 503, name: 'AuthRetryableFetchError' }
+        : options.invalid
+          ? {}
+          : null,
     };
   });
   const from = vi.fn().mockReturnValue({ select: () => ({ eq }) });
@@ -59,7 +69,7 @@ describe('US-01 zaščiten API', () => {
       403,
     );
   });
-  it.each([{ dbError: true }, { offline: true }])(
+  it.each([{ dbError: true }, { offline: true }, { authUnavailable: true }])(
     'varno obravnava nedostopno storitev %j',
     async (options) => {
       const { app } = setup(options);

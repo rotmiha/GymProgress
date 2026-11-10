@@ -38,6 +38,15 @@ it('začne trening, prikaže vaje in pošlje opravljeno serijo v kg', async () =
     if (path === '/sessions/s/complete' && method === 'POST') {
       sessions[0].completed_at = '2026-11-10T11:00:00Z';
       sessions[0].total_volume_kg = 100;
+      sessions[0].workout_records = [
+        {
+          id: 'r',
+          exercise_id: 'e',
+          weight_kg: 12.5,
+          previous_weight_kg: 10,
+          exercises: { name: 'Počep' },
+        },
+      ];
       return sessions[0];
     }
     return null;
@@ -60,4 +69,6 @@ it('začne trening, prikaže vaje in pošlje opravljeno serijo v kg', async () =
   await screen.findByText('Trening je zaključen. Skupni volumen: 100 kg.');
   expect(screen.queryByRole('button', { name: 'Dodaj serijo' })).toBeNull();
   expect(screen.queryByRole('button', { name: 'Uredi serijo 1' })).toBeNull();
+  expect(screen.getByText('Novi osebni rekordi')).toBeInTheDocument();
+  expect(screen.getByText('Počep: 12.5 kg')).toBeInTheDocument();
 });

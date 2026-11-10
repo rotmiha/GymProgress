@@ -1,12 +1,10 @@
 # GymProgress
 
 Spletna aplikacija za načrtovanje treningov in spremljanje napredka.
-Implementirani sta **US-01 – Registracija in prijava** ter **US-02 – Programi**:
-uporabniški račun in sestavljanje ter urejanje lastnih programov iz kataloga vaj.
-**US-03** doda povabila ter potrjene povezave trenerja in stranke.
-**US-04** omogoči dodelitev lastnega programa povezani stranki in njen pregled programov.
-**US-05** omogoči začetek lastnega treninga ter vnos, popravek in brisanje serij.
-**US-06** zaključi trening in izračuna skupni volumen v kg.
+Implementirane so **US-01 do US-07**: registracija in prijava, lastni programi,
+povabila in potrditev povezave s trenerjem, dodelitev programa, beleženje serij,
+zaključek treninga z volumnom ter zaznavanje in prikaz novih osebnih rekordov.
+Vmesnik je preprost, v sivinskih odtenkih. Funkcionalnosti po US-07 še niso implementirane.
 
 ## Lokalni zagon
 
@@ -21,6 +19,9 @@ Lokalna podatkovna baza ni potrebna.
    Za dodelitve izvedite `supabase/migrations/202611100005_assignments.sql`.
    Za treninge izvedite `supabase/migrations/202611100006_workouts.sql`.
    Za zaključek izvedite `supabase/migrations/202611100007_complete_workout.sql`.
+   Za rekorde izvedite `supabase/migrations/202611100008_personal_records.sql`.
+   Migracije izvajajte po vrstnem redu in vsako samo enkrat. Če je del že izveden,
+   izvedite samo preostale datoteke. Popravek v `supabase/repairs` je ločen in ponovljiv.
    Namenjena je svežemu projektu brez aplikacijske tabele `public.users`.
    Obstoječih Auth uporabnikov ne uvaža; za preverjanje ustvarite nove račune.
 2. V nastavitvah **Authentication** omogočite e-pošto in geslo. Nastavite
@@ -33,8 +34,21 @@ Lokalna podatkovna baza ni potrebna.
 
    ```powershell
    npm install
-   Copy-Item frontend/.env.example frontend/.env
-   Copy-Item backend/.env.example backend/.env
+   ```
+
+   Ustvarite `frontend/.env` (obstoječe datoteke ne prepisujte):
+
+   ```dotenv
+   VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+   VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_OR_ANON_KEY
+   ```
+
+   Ustvarite `backend/.env`:
+
+   ```dotenv
+   SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+   SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_OR_ANON_KEY
+   PORT=3001
    ```
 
 5. V obeh `.env` nastavite URL projekta in njegov **publishable** ključ
@@ -60,6 +74,13 @@ na uro. Za lokalni razvoj lahko začasno izklopite **Confirm email** v
 **Authentication → Sign In / Providers → Email** in ponovite registracijo.
 Pri preverjanju potrditvenega toka ga ponovno vključite in uporabite lasten SMTP.
 Napaka `over_request_rate_limit` pomeni omejitev zahtev; v tem primeru počakajte.
+
+Če prijava uspe, profil pa ni dostopen, uporabite diagnostiko
+`supabase/diagnostics/profile_access.sql`. Če SQL Editor javi, da shema `private`
+ne obstaja, je obstoječa baza pripravljena po starejši shemi. V istem Supabase
+projektu kot v `.env` izvedite `supabase/repairs/auth_access.sql`, nato se odjavite
+in prijavite. Popravek ohrani račune, zamenja politike dostopa na `public.users`
+in zagotovi zahtevane funkcije ter sprožilce za registracijo.
 
 ## Preverjanje in gradnja
 
@@ -103,6 +124,28 @@ preverjanje s pravimi računi.
   prikaže sporočilo in omogoči ponovni poskus.
 - API ne beleži žetonov in vrača `Cache-Control: no-store`. Supabase odjemalec
   hrani sejo v brskalniku za obnovitev ob ponovnem odprtju.
+
+## Programi in treningi
+
+Po prijavi so na voljo zavihki Programi, Povezave, Dodelitve in Treningi.
+Katalog vsebuje šest začetnih vaj iz migracije 0003. Program in njegove vaje
+se shranijo atomarno. Lastnik lahko program spreminja, prejemnik dodelitve pa
+ga lahko uporablja za svoje treninge.
+
+Trening shrani posnetek programa. Serije lahko ureja samo lastnik in samo pred
+zaključkom; potrjen trener ima bralni dostop prek API-ja. Zaključek zaklene
+trening, izračuna volumen in primerja največjo težo pri vsaki vaji z vsemi
+prejšnjimi zaključenimi treningi istega uporabnika. Prvi zaključeni rezultat
+vzpostavi začetni rekord; enaka ali nižja teža pozneje ni rekord. Vrednost 0 kg
+je dovoljena. Rekordni dogodki ostanejo vezani na trening in se ne podvojijo
+ob ponovnem zaključku.
+
+Vsa pisanja izvajajo preverjene SQL funkcije prek Express API-ja. Neposredna
+pisanja tabelam so uporabnikom odvzeta, branja pa omejuje RLS. Zato enaka
+pravila veljajo tudi za neposredne klice Supabase RPC.
+
+[Ročno preverjanje US-02 do US-07](docs/08-preverjanje-mvp.md) dopolnjuje
+avtomatizirane preizkuse PostgreSQL, API-ja in obrazcev.
 
 ## Dokumentacija
 
