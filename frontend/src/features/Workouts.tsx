@@ -207,6 +207,24 @@ export function Workouts({ api }: { api: Api }) {
               {workout.total_volume_kg} kg.
             </p>
           )}
+          {(workout.workout_records ?? []).length > 0 && (
+            <div aria-label="Osebni rekordi">
+              <h3>Novi osebni rekordi</h3>
+              <ul>
+                {workout.workout_records?.map((record) => (
+                  <li key={record.id}>
+                    <strong>
+                      {record.exercises.name}: {record.weight_kg} kg
+                    </strong>{' '}
+                    —{' '}
+                    {record.previous_weight_kg === null
+                      ? 'prvi zabeleženi rezultat'
+                      : `prej ${record.previous_weight_kg} kg`}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <ol>
             {workout.program_snapshot.map((item) => (
               <li key={item.position}>

@@ -49,3 +49,12 @@ Preverjanje na gostovanem Supabase z resničnimi računi je ločen ročni korak.
 - Shranjena sta čas zaključka in rezultat, ki ostaneta po osvežitvi.
 - Ponoven klic zaključka vrne isti čas in rezultat, brez novih zapisov.
 - Zaključenemu treningu ni mogoče dodajati, spreminjati ali brisati serij.
+
+## US-07 – osebni rekordi (#15, #16)
+
+- Prvi zaključen trening z vajo ustvari začetni rekord.
+- Naslednji trening z enako ali nižjo največjo težo ne prikaže novega rekorda.
+- Višja teža prikaže nov rekord ter prejšnjo vrednost pri ustrezni vaji.
+- Višja teža na nedokončanem ali tujem treningu ne vpliva na primerjavo.
+- Rekord ostane prikazan ob ponovnem odprtju treninga; ponovljen zaključek
+  ne ustvari dodatnih dogodkov. Tuj račun dogodkov ne vidi.

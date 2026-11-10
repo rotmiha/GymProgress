@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 import { authError, validateCredentials } from './validation';
@@ -27,6 +27,7 @@ export function App() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [reload, setReload] = useState(0);
+  const refreshedForProfile = useRef(false);
 
   useEffect(() => {
     if (!supabase) {
@@ -55,8 +56,42 @@ export function App() {
           signal: controller.signal,
         });
         const body = await response.json();
+        if (controller.signal.aborted) return;
+        if (response.status === 401 && supabase) {
+          if (!refreshedForProfile.current) {
+            refreshedForProfile.current = true;
+            const refresh = await supabase.auth.refreshSession();
+            if (controller.signal.aborted) return;
+            if (
+              !refresh.error &&
+              refresh.data.session &&
+              refresh.data.session.access_token !== session.access_token
+            ) {
+              setSession(refresh.data.session);
+              return;
+            }
+            if (
+              refresh.error &&
+              (refresh.error.status === 0 ||
+                (refresh.error.status ?? 0) >= 500 ||
+                refresh.error.name === 'AuthRetryableFetchError')
+            ) {
+              throw new Error('Supabase Auth trenutno ni dosegljiv. Poskusite znova.');
+            }
+          }
+          const { error: signOutError } = await supabase.auth.signOut({ scope: 'local' });
+          if (signOutError)
+            throw new Error('Seje ni mogoče obnoviti. Poskusite se odjaviti in ponovno prijaviti.');
+          setProfile(null);
+          setSession(null);
+          setNotice('Seja je potekla ali ni več veljavna. Ponovno se prijavite.');
+          return;
+        }
         if (!response.ok) throw new Error(body.error ?? 'Profila ni mogoče naložiti.');
-        if (!controller.signal.aborted) setProfile(body);
+        if (!controller.signal.aborted) {
+          refreshedForProfile.current = false;
+          setProfile(body);
+        }
       } catch (err) {
         if (!controller.signal.aborted)
           setError(err instanceof Error ? err.message : 'Profila ni mogoče naložiti.');
@@ -84,6 +119,7 @@ export function App() {
       return;
     }
     setBusy(true);
+    refreshedForProfile.current = false;
     try {
       if (register) {
         const { data, error } = await supabase.auth.signUp({

@@ -28,7 +28,28 @@ export function createApp(clientForToken: (token: string) => SupabaseClient) {
         error,
       } = await client.auth.getUser(match[1]);
       if (error || !user) {
-        res.status(401).json({ error: 'Seja ni veljavna. Ponovno se prijavite.' });
+        if (error?.status === 429) {
+          res
+            .status(429)
+            .json({
+              error: 'Preveč preverjanj prijave. Počakajte in poskusite znova.',
+              code: 'AUTH_RATE_LIMITED',
+            });
+          return;
+        }
+        const unavailable =
+          error &&
+          (error.status === 0 ||
+            (error.status ?? 0) >= 500 ||
+            error.name === 'AuthRetryableFetchError');
+        res.status(unavailable ? 503 : 401).json({
+          error: unavailable
+            ? 'Supabase Auth trenutno ni dosegljiv. Poskusite znova.'
+            : 'Seja ni veljavna. Ponovno se prijavite.',
+          code: unavailable ? 'AUTH_UNAVAILABLE' : 'AUTH_SESSION_INVALID',
+          upstream_status: error?.status ?? null,
+          upstream_code: error?.code ?? null,
+        });
         return;
       }
       // Identiteta izvira iz preverjenega žetona. RLS dodatno preveri aktivno sejo.
