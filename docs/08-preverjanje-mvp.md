@@ -35,6 +35,8 @@ Preverjanje na gostovanem Supabase z resničnimi računi je ločen ročni korak.
 - Stranka po osvežitvi vidi dodeljeni program v Dodelitvah in Programih.
 - Čakajoča povezava ne omogoči dodelitve. Drug račun ne vidi dodeljenega programa.
 - Ponovitev dodelitve istega programa isti stranki ne ustvari dvojnikov.
+- Za starejšo bazo brez sestavljene omejitve UNIQUE izvedite migracijo 0010.
+  Dodelitev mora uspeti tudi tam; prejemnik vidi program in vaje, drug račun pa ne.
 
 ## US-05 – beleženje serij (#11, #12)
 

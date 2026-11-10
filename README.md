@@ -21,6 +21,7 @@ Lokalna podatkovna baza ni potrebna.
    Za zaključek izvedite `supabase/migrations/202611100007_complete_workout.sql`.
    Za rekorde izvedite `supabase/migrations/202611100008_personal_records.sql`.
    Za združljivost starih vlog izvedite `supabase/migrations/202611100009_legacy_role_compatibility.sql`.
+   Za dodelitve v obstoječi shemi izvedite `supabase/migrations/202611100010_assignment_legacy_schema.sql`.
    Migracije izvajajte po vrstnem redu in vsako samo enkrat. Če je del že izveden,
    izvedite samo preostale datoteke. Popravek v `supabase/repairs` je ločen in ponovljiv.
    Namenjena je svežemu projektu brez aplikacijske tabele `public.users`.
@@ -146,6 +147,12 @@ in `trainer` (vključno s presledki iz stolpca CHAR). Bere jih iz zaščitenega
 profila; uporabniški metapodatki ne dajejo pravic. Računov, povezav ali vaj ne
 spreminja. Program lahko ustvari stranka ali trener, dodeli pa ga lahko le trener
 potrjeni stranki. Po izvedbi migracije osvežite stran, da API vrne enotno vlogo.
+
+Če dodelitev vrne `42P10`, v obstoječi tabeli manjka omejitev, ki jo je uporabljal
+prejšnji `ON CONFLICT`. Migracija 0010 zamenja ta del funkcije z branjem in
+vstavljanjem pod zaklepom programa ter obnovi pravice branja dodeljenega programa
+in njegovih vaj. Ohrani obstoječe dodelitve in prepreči nove podvojitve prek RPC.
+Stranka nato v Dodelitvah osveži seznam in iz dodeljenega programa začne svoj trening.
 
 Trening shrani posnetek programa. Serije lahko ureja samo lastnik in samo pred
 zaključkom; potrjen trener ima bralni dostop prek API-ja. Zaključek zaklene
