@@ -31,3 +31,13 @@ Preverjanje na gostovanem Supabase z resničnimi računi je ločen ročni korak.
 - Stranka po osvežitvi vidi dodeljeni program v Dodelitvah in Programih.
 - Čakajoča povezava ne omogoči dodelitve. Drug račun ne vidi dodeljenega programa.
 - Ponovitev dodelitve istega programa isti stranki ne ustvari dvojnikov.
+
+## US-05 – beleženje serij (#11, #12)
+
+- V Treningih izberite lasten ali dodeljen program in začnite trening.
+- Prikažejo se njegove vaje, ciljne serije in ponovitve.
+- Dodajte, popravite in izbrišite serijo. Ponovitve morajo biti pozitivno celo
+  število; teža je v kg in je lahko 0, ne sme pa biti negativna.
+- Po osvežitvi strani ponovno odprite trening in preverite ohranjene serije.
+- Sprememba programa ne spremeni posnetka že začetega treninga.
+- Drug račun ne vidi ali spreminja vaših serij. Potrjen trener jih lahko le bere.

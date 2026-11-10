@@ -89,5 +89,75 @@ export function featureRoutes() {
       201,
     );
   });
+  router.get('/sessions', async (_req, res) => {
+    databaseResponse(
+      res,
+      await client(res)
+        .from('workout_sessions')
+        .select('*,workout_sets(*)')
+        .eq('trainee_id', res.locals.profile.id)
+        .order('started_at', { ascending: false })
+        .limit(50),
+    );
+  });
+  router.get('/clients/:id/sessions', async (req, res) => {
+    const permission = await client(res).rpc('get_client_profile', { client: req.params.id });
+    if (permission.error) {
+      databaseResponse(res, permission);
+      return;
+    }
+    databaseResponse(
+      res,
+      await client(res)
+        .from('workout_sessions')
+        .select('*,workout_sets(*)')
+        .eq('trainee_id', req.params.id)
+        .order('started_at', { ascending: false })
+        .limit(50),
+    );
+  });
+  router.post('/sessions', async (req, res) => {
+    databaseResponse(
+      res,
+      await client(res).rpc('start_workout', {
+        program: req.body?.program_id,
+        request_id: req.body?.request_id,
+      }),
+      201,
+    );
+  });
+  router.post('/sessions/:id/sets', async (req, res) => {
+    databaseResponse(
+      res,
+      await client(res).rpc('save_workout_set', {
+        p_session: req.params.id,
+        p_position: req.body?.exercise_position,
+        p_reps: req.body?.reps,
+        p_weight: req.body?.weight_kg,
+      }),
+      201,
+    );
+  });
+  router.put('/sessions/:id/sets/:setId', async (req, res) => {
+    databaseResponse(
+      res,
+      await client(res).rpc('save_workout_set', {
+        p_session: req.params.id,
+        p_set: req.params.setId,
+        p_position: req.body?.exercise_position,
+        p_reps: req.body?.reps,
+        p_weight: req.body?.weight_kg,
+      }),
+    );
+  });
+  router.delete('/sessions/:id/sets/:setId', async (req, res) => {
+    databaseResponse(
+      res,
+      await client(res).rpc('delete_workout_set', {
+        p_session: req.params.id,
+        p_set: req.params.setId,
+      }),
+    );
+  });
   return router;
 }
