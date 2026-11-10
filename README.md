@@ -4,6 +4,7 @@ Spletna aplikacija za načrtovanje treningov in spremljanje napredka.
 Implementirani sta **US-01 – Registracija in prijava** ter **US-02 – Programi**:
 uporabniški račun in sestavljanje ter urejanje lastnih programov iz kataloga vaj.
 **US-03** doda povabila ter potrjene povezave trenerja in stranke.
+**US-04** omogoči dodelitev lastnega programa povezani stranki in njen pregled programov.
 
 ## Lokalni zagon
 
@@ -15,6 +16,7 @@ Lokalna podatkovna baza ni potrebna.
    Če je prva migracija že izvedena, izvedite samo drugo.
    Za programe nato izvedite še `supabase/migrations/202611100003_programs.sql`.
    Za povezave izvedite `supabase/migrations/202611100004_connections.sql`.
+   Za dodelitve izvedite `supabase/migrations/202611100005_assignments.sql`.
    Namenjena je svežemu projektu brez aplikacijske tabele `public.users`.
    Obstoječih Auth uporabnikov ne uvaža; za preverjanje ustvarite nove račune.
 2. V nastavitvah **Authentication** omogočite e-pošto in geslo. Nastavite
