@@ -35,6 +35,11 @@ it('začne trening, prikaže vaje in pošlje opravljeno serijo v kg', async () =
       });
       return 'set';
     }
+    if (path === '/sessions/s/complete' && method === 'POST') {
+      sessions[0].completed_at = '2026-11-10T11:00:00Z';
+      sessions[0].total_volume_kg = 100;
+      return sessions[0];
+    }
     return null;
   });
   render(<Workouts api={api as Api} />);
@@ -51,4 +56,8 @@ it('začne trening, prikaže vaje in pošlje opravljeno serijo v kg', async () =
     reps: 8,
     weight_kg: 12.5,
   });
+  fireEvent.click(screen.getByRole('button', { name: 'Zaključi trening' }));
+  await screen.findByText('Trening je zaključen. Skupni volumen: 100 kg.');
+  expect(screen.queryByRole('button', { name: 'Dodaj serijo' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Uredi serijo 1' })).toBeNull();
 });
