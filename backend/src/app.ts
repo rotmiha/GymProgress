@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { featureRoutes } from './features.js';
 
 export function createApp(clientForToken: (token: string) => SupabaseClient) {
   const app = express();
@@ -13,7 +14,8 @@ export function createApp(clientForToken: (token: string) => SupabaseClient) {
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
   });
-  app.get('/api/me', async (req, res) => {
+  app.use(express.json({ limit: '64kb' }));
+  app.use('/api', async (req, res, next) => {
     const match = /^Bearer (\S+)$/i.exec(req.get('Authorization') ?? '');
     if (!match) {
       res.status(401).json({ error: 'Za dostop se prijavite.' });
@@ -43,10 +45,31 @@ export function createApp(clientForToken: (token: string) => SupabaseClient) {
         res.status(403).json({ error: 'Profil ni dostopen ali pa je seja zaključena.' });
         return;
       }
-      res.json(profile);
+      res.locals.client = client;
+      res.locals.profile = profile;
+      next();
     } catch {
       res.status(503).json({ error: 'Storitev trenutno ni dosegljiva.' });
     }
   });
+  app.get('/api/me', (_req, res) => {
+    res.json(res.locals.profile);
+  });
+  app.use('/api', featureRoutes());
+  app.use(
+    (
+      error: { status?: number },
+      _req: express.Request,
+      res: express.Response,
+      _next: express.NextFunction,
+    ) => {
+      const invalid = error.status === 400 || error.status === 413;
+      res
+        .status(invalid ? error.status! : 503)
+        .json({
+          error: invalid ? 'Neveljavna ali prevelika zahteva.' : 'Storitev trenutno ni dosegljiva.',
+        });
+    },
+  );
   return app;
 }

@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 import { authError, validateCredentials } from './validation';
+import { Dashboard } from './features/Dashboard';
 
 type Profile = {
   id: string;
@@ -140,7 +141,7 @@ export function App() {
   }
 
   return (
-    <main>
+    <main className={profile ? 'workspace' : undefined}>
       <section aria-label="Uporabniški račun">
         <p>GymProgress</p>
         <h1>{session ? 'Moj račun' : register ? 'Ustvarite račun' : 'Dobrodošli nazaj'}</h1>
@@ -177,6 +178,9 @@ export function App() {
                 <button onClick={signOut} disabled={busy}>
                   {busy ? 'Odjava …' : 'Odjava'}
                 </button>
+                {profile && (
+                  <Dashboard token={session.access_token} userId={profile.id} role={profile.role} />
+                )}
               </>
             ) : (
               <>
