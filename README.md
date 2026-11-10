@@ -23,6 +23,7 @@ Lokalna podatkovna baza ni potrebna.
    Za združljivost starih vlog izvedite `supabase/migrations/202611100009_legacy_role_compatibility.sql`.
    Za dodelitve v obstoječi shemi izvedite `supabase/migrations/202611100010_assignment_legacy_schema.sql`.
    Za treninge v obstoječi shemi izvedite `supabase/migrations/202611100011_workout_legacy_schema.sql`.
+   Za registracijo v bazi s staro omejitvijo vlog izvedite `supabase/migrations/202611100012_registration_roles.sql`.
    Migracije izvajajte po vrstnem redu in vsako samo enkrat. Če je del že izveden,
    izvedite samo preostale datoteke. Popravek v `supabase/repairs` je ločen in ponovljiv.
    Namenjena je svežemu projektu brez aplikacijske tabele `public.users`.
