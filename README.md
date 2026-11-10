@@ -62,12 +62,6 @@ Frontend se zgradi v `frontend/dist`, backend v `backend/dist`. Zgrajeni backend
 zaženete z `npm start -w backend`. Pri gostovanju frontenda je treba `/api`
 posredovati backendu prek HTTPS; Vite proxy deluje samo v razvoju.
 
-Avtomatizirani testi preverijo tudi migracijo in RLS v lokalnem PostgreSQL
-okolju PGlite z nadomestkom Supabase Auth tabel in JWT funkcij. Ne dokazujejo
-nastavitev gostovanega projekta. Za preverjanje dejanske baze izvedite še
-[SQL teste RLS](supabase/tests/us01.sql) v SQL Editorju; začasne zapise povrnejo
-v transakciji. [Sprejemni scenariji US-01](docs/07-preverjanje-us01.md) opisujejo
-preverjanje s pravimi računi.
 
 ## Programi in treningi
 
