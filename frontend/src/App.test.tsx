@@ -26,6 +26,7 @@ vi.mock('./supabase', () => ({
   },
 }));
 import { App } from './App';
+vi.mock('./features/Dashboard', () => ({ Dashboard: () => null }));
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();

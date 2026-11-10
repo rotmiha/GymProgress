@@ -154,3 +154,71 @@ dd {
 [role='alert'] {
   border-left: 3px solid #555;
 }
+
+main.workspace {
+  max-width: 64rem;
+  align-items: start;
+}
+.dashboard {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ddd;
+}
+h2 {
+  font-size: 1.25rem;
+  margin: 1.5rem 0 1rem;
+}
+h3 {
+  font-size: 1rem;
+  margin: 0 0 0.75rem;
+}
+article {
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+fieldset {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+fieldset > div {
+  margin-bottom: 1rem;
+}
+textarea {
+  width: 100%;
+  min-height: 5rem;
+  padding: 0.75rem;
+  font: inherit;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+}
+.actions,
+.field-row,
+nav {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+.actions > *,
+.field-row > * {
+  flex: 1;
+  min-width: 6rem;
+}
+button.secondary {
+  background: #fff;
+  color: #333;
+  border-color: #ccc;
+}
+button.secondary:hover:not(:disabled) {
+  background: #eee;
+}
+nav button {
+  width: auto;
+}
+nav button[aria-pressed='true'] {
+  border: 2px solid #222;
+  font-weight: 700;
+}

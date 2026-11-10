@@ -1,9 +1,8 @@
 # GymProgress
 
 Spletna aplikacija za načrtovanje treningov in spremljanje napredka.
-Implementirana je **samo US-01 – Registracija in prijava**: registracija z
-e-naslovom, geslom in vlogo stranka/trener, prijava, odjava in lasten profil.
-Preostale funkcionalnosti so načrtovane v dokumentaciji.
+Implementirani sta **US-01 – Registracija in prijava** ter **US-02 – Programi**:
+uporabniški račun in sestavljanje ter urejanje lastnih programov iz kataloga vaj.
 
 ## Lokalni zagon
 
@@ -13,6 +12,7 @@ Lokalna podatkovna baza ni potrebna.
 1. V Supabase SQL Editorju izvedite [migracijo US-01](supabase/migrations/202611100001_us01_auth.sql).
    Nato izvedite še [migracijo za ime in priimek](supabase/migrations/202611100002_registration_names.sql).
    Če je prva migracija že izvedena, izvedite samo drugo.
+   Za programe nato izvedite še `supabase/migrations/202611100003_programs.sql`.
    Namenjena je svežemu projektu brez aplikacijske tabele `public.users`.
    Obstoječih Auth uporabnikov ne uvaža; za preverjanje ustvarite nove račune.
 2. V nastavitvah **Authentication** omogočite e-pošto in geslo. Nastavite
