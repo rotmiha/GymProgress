@@ -15,6 +15,7 @@ export function databaseResponse(
       'PGRST204',
       'PGRST205',
       '42P01',
+      '42703',
       '42883',
     ].includes(code);
     const invalid = code.startsWith('22') || code.startsWith('23') || code === 'P0001';
