@@ -28,6 +28,8 @@ erDiagram
     USERS {
         uuid id PK
         string email UK
+        string ime
+        string priimek
         string role
         datetime created_at
     }
