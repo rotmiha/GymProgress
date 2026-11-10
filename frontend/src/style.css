@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+:root { font-family: Inter, system-ui, sans-serif; color: #152d2a; background: #edf3f0; }
+h1 { font-size: 1.7rem; font-weight: 700; margin: .5rem 0 1rem; }
+.brand { color: #16715b; font-weight: 800; letter-spacing: .03em; }
+.intro { color: #526661; margin-bottom: 1.5rem; }
+label, dt { display: block; font-weight: 600; margin: 1rem 0 .4rem; }
+input, select { width: 100%; border: 1px solid #91a8a0; border-radius: .5rem; padding: .7rem; background: white; }
+button { cursor: pointer; border-radius: .5rem; padding: .8rem; }
+button:disabled { opacity: .6; cursor: wait; }
+:focus-visible { outline: 3px solid #319b7b; outline-offset: 3px; }
+.primary { width: 100%; margin-top: 1.5rem; background: #16624e; color: white; font-weight: 600; }
+.switch { display: block; width: 100%; color: #16624e; margin-top: .7rem; }
+small { display: block; margin-top: .3rem; color: #526661; }
+.message { padding: .8rem; background: #e6f5ed; border-radius: .5rem; margin: 1rem 0; }
+.error { background: #fff0ef; color: #9d241b; }
+dd { overflow-wrap: anywhere; }
