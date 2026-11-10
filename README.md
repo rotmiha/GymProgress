@@ -11,6 +11,8 @@ Potrebujete **Node.js 22.12 ali novejši**, npm in gostovani projekt Supabase.
 Lokalna podatkovna baza ni potrebna.
 
 1. V Supabase SQL Editorju izvedite [migracijo US-01](supabase/migrations/202611100001_us01_auth.sql).
+   Nato izvedite še [migracijo za ime in priimek](supabase/migrations/202611100002_registration_names.sql).
+   Če je prva migracija že izvedena, izvedite samo drugo.
    Namenjena je svežemu projektu brez aplikacijske tabele `public.users`.
    Obstoječih Auth uporabnikov ne uvaža; za preverjanje ustvarite nove račune.
 2. V nastavitvah **Authentication** omogočite e-pošto in geslo. Nastavite
@@ -44,6 +46,13 @@ Registrirajte se, potrdite povezavo v e-pošti in se prijavite. Če v razvoju
 izklopite potrditev e-pošte, registracija uporabnika prijavi takoj. Pri omejitvi
 pošiljanja Supabase e-pošte počakajte ali nastavite lasten SMTP.
 
+Če pri testiranju dobite `over_email_send_rate_limit`, je dosežena projektna
+omejitev potrditvenih e-poštnih sporočil. Vgrajeni ponudnik dovoli 2 sporočili
+na uro. Za lokalni razvoj lahko začasno izklopite **Confirm email** v
+**Authentication → Sign In / Providers → Email** in ponovite registracijo.
+Pri preverjanju potrditvenega toka ga ponovno vključite in uporabite lasten SMTP.
+Napaka `over_request_rate_limit` pomeni omejitev zahtev; v tem primeru počakajte.
+
 ## Preverjanje in gradnja
 
 ```powershell
@@ -51,6 +60,9 @@ npm test
 npm run typecheck
 npm run build
 ```
+
+Za enotno oblikovanje TypeScript, TSX, HTML, CSS in JSON datotek uporabite
+`npm run format`. Ukaz `npm run format:check` preveri oblikovanje brez spreminjanja datotek.
 
 Frontend se zgradi v `frontend/dist`, backend v `backend/dist`. Zgrajeni backend
 zaženete z `npm start -w backend`. Pri gostovanju frontenda je treba `/api`

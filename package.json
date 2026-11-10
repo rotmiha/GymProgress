@@ -1,17 +1,25 @@
 {
   "name": "gymprogress",
   "private": true,
-  "workspaces": ["frontend", "backend"],
-  "engines": { "node": ">=22.12.0" },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "concurrently -k -n api,web \"npm run dev -w backend\" \"npm run dev -w frontend\"",
     "build": "npm run build --workspaces",
     "test": "vitest run",
-    "typecheck": "npm run typecheck --workspaces"
+    "typecheck": "npm run typecheck --workspaces",
+    "format": "prettier --write \".prettierrc.json\" \"package.json\" \"{frontend,backend}/**/*.{ts,tsx,css,html,json}\"",
+    "format:check": "prettier --check \".prettierrc.json\" \"package.json\" \"{frontend,backend}/**/*.{ts,tsx,css,html,json}\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
-    "vitest": "^4.1.12",
-    "typescript": "^5.9.3"
+    "prettier": "^3.9.10",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.12"
   }
 }

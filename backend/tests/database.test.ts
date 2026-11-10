@@ -19,11 +19,31 @@ it('izvede migracijo in preveri RLS, varovanje vlog ter preklic sej v PostgreSQL
         $$ select (auth.jwt()->>'sub')::uuid $$;
       grant usage on schema auth to authenticated;
     `);
-    const migration = await readFile(fileURLToPath(new URL('../../supabase/migrations/202611100001_us01_auth.sql', import.meta.url)), 'utf8');
-    const checks = await readFile(fileURLToPath(new URL('../../supabase/tests/us01.sql', import.meta.url)), 'utf8');
+    const migration = await readFile(
+      fileURLToPath(
+        new URL('../../supabase/migrations/202611100001_us01_auth.sql', import.meta.url),
+      ),
+      'utf8',
+    );
+    const checks = await readFile(
+      fileURLToPath(new URL('../../supabase/tests/us01.sql', import.meta.url)),
+      'utf8',
+    );
     await db.exec(migration);
+    await db.exec(
+      await readFile(
+        fileURLToPath(
+          new URL('../../supabase/migrations/202611100002_registration_names.sql', import.meta.url),
+        ),
+        'utf8',
+      ),
+    );
     await db.exec(checks);
-    const { rows } = await db.query<{ count: number }>('select count(*)::int as count from public.users');
+    const { rows } = await db.query<{ count: number }>(
+      'select count(*)::int as count from public.users',
+    );
     expect(rows[0].count).toBe(0); // Testni zapisi so povrnjeni.
-  } finally { await db.close(); }
+  } finally {
+    await db.close();
+  }
 }, 30_000);
