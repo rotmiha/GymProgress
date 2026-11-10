@@ -211,6 +211,11 @@ export function Workouts({ api }: { api: Api }) {
         {workout ? (
           <article className="panel workout-detail" aria-label="Izbrani trening">
             <h3>{workout.program_name}</h3>
+            {workout.program_snapshot_reconstructed && (
+              <p className="muted">
+                Načrt tega starejšega treninga je obnovljen iz trenutnega programa.
+              </p>
+            )}
             {workout.completed_at && (
               <p>
                 Zaključeno: {new Date(workout.completed_at).toLocaleString('sl-SI')}. Skupni

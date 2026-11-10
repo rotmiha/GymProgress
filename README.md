@@ -22,6 +22,7 @@ Lokalna podatkovna baza ni potrebna.
    Za rekorde izvedite `supabase/migrations/202611100008_personal_records.sql`.
    Za združljivost starih vlog izvedite `supabase/migrations/202611100009_legacy_role_compatibility.sql`.
    Za dodelitve v obstoječi shemi izvedite `supabase/migrations/202611100010_assignment_legacy_schema.sql`.
+   Za treninge v obstoječi shemi izvedite `supabase/migrations/202611100011_workout_legacy_schema.sql`.
    Migracije izvajajte po vrstnem redu in vsako samo enkrat. Če je del že izveden,
    izvedite samo preostale datoteke. Popravek v `supabase/repairs` je ločen in ponovljiv.
    Namenjena je svežemu projektu brez aplikacijske tabele `public.users`.
@@ -153,6 +154,14 @@ prejšnji `ON CONFLICT`. Migracija 0010 zamenja ta del funkcije z branjem in
 vstavljanjem pod zaklepom programa ter obnovi pravice branja dodeljenega programa
 in njegovih vaj. Ohrani obstoječe dodelitve in prepreči nove podvojitve prek RPC.
 Stranka nato v Dodelitvah osveži seznam in iz dodeljenega programa začne svoj trening.
+
+Če začetek treninga vrne `42703`, starejši shemi manjkajo stolpci, ki jih uporablja
+nov tok treninga. Migracija 0011 doda ime in posnetek programa ter položaj vaje
+pri serijah, obnovi funkcije in pravila branja ter ohrani obstoječe treninge in
+opravljene serije. Stare manjkajoče načrte obnovi iz trenutnega programa in jih
+označi kot obnovljene; prvotnega načrta iz starega modela ni mogoče zanesljivo
+rekonstruirati. Obstoječi shranjeni posnetki se ne prepišejo. V razvojnem načinu
+se ob napaki API-ja izpiše tudi njegova koda, da je vzrok lažje prepoznati.
 
 Trening shrani posnetek programa. Serije lahko ureja samo lastnik in samo pred
 zaključkom; potrjen trener ima bralni dostop prek API-ja. Zaključek zaklene

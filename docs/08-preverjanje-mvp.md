@@ -46,6 +46,10 @@ Preverjanje na gostovanem Supabase z resničnimi računi je ločen ročni korak.
   število; teža je v kg in je lahko 0, ne sme pa biti negativna.
 - Po osvežitvi strani ponovno odprite trening in preverite ohranjene serije.
 - Sprememba programa ne spremeni posnetka že začetega treninga.
+- Za starejšo shemo brez posnetka programa izvedite migracijo 0011. Preverite,
+  da nov trening lahko začnete, vnesete, popravite in izbrišete serije ter ga
+  zaključite. Obstoječi rezultati ostanejo ohranjeni; obnovljeni stari načrti
+  so označeni, da jih ne zamenjamo s prvotno shranjenimi posnetki.
 - Drug račun ne vidi ali spreminja vaših serij. Potrjen trener jih lahko le bere.
 
 ## US-06 – zaključek in volumen (#13, #14)

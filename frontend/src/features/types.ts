@@ -17,6 +17,7 @@ export type WorkoutSession = {
   id: string;
   trainee_id: string;
   program_name: string;
+  program_snapshot_reconstructed?: boolean;
   started_at: string;
   completed_at: string | null;
   total_volume_kg: number;
