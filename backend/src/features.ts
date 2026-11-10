@@ -159,5 +159,8 @@ export function featureRoutes() {
       }),
     );
   });
+  router.post('/sessions/:id/complete', async (req, res) => {
+    databaseResponse(res, await client(res).rpc('complete_workout', { p_session: req.params.id }));
+  });
   return router;
 }

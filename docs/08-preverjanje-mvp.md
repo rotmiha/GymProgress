@@ -41,3 +41,11 @@ Preverjanje na gostovanem Supabase z resničnimi računi je ločen ročni korak.
 - Po osvežitvi strani ponovno odprite trening in preverite ohranjene serije.
 - Sprememba programa ne spremeni posnetka že začetega treninga.
 - Drug račun ne vidi ali spreminja vaših serij. Potrjen trener jih lahko le bere.
+
+## US-06 – zaključek in volumen (#13, #14)
+
+- Prazen trening nima omogočenega zaključka; tudi API ga zavrne.
+- Shranite 10 × 20 kg in 5 × 12,5 kg. Zaključek pokaže 262,5 kg.
+- Shranjena sta čas zaključka in rezultat, ki ostaneta po osvežitvi.
+- Ponoven klic zaključka vrne isti čas in rezultat, brez novih zapisov.
+- Zaključenemu treningu ni mogoče dodajati, spreminjati ali brisati serij.

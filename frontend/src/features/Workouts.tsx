@@ -79,6 +79,7 @@ export function Workouts({ api }: { api: Api }) {
   const [requestId, setRequestId] = useState(() => crypto.randomUUID());
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   async function load() {
     const [nextPrograms, nextSessions] = await Promise.all([
       api<Program[]>('/programs'),
@@ -96,6 +97,7 @@ export function Workouts({ api }: { api: Api }) {
     if (busy) return false;
     setBusy(true);
     setError('');
+    setNotice('');
     try {
       await action();
       await load();
@@ -146,6 +148,7 @@ export function Workouts({ api }: { api: Api }) {
     <div>
       <h2>Moji treningi</h2>
       {error && <p role="alert">{error}</p>}
+      {notice && <p role="status">{notice}</p>}
       <button className="secondary" disabled={busy} onClick={() => void mutate(async () => {})}>
         Osveži treninge
       </button>
@@ -198,6 +201,12 @@ export function Workouts({ api }: { api: Api }) {
       {workout && (
         <article aria-label="Izbrani trening">
           <h3>{workout.program_name}</h3>
+          {workout.completed_at && (
+            <p>
+              Zaključeno: {new Date(workout.completed_at).toLocaleString('sl-SI')}. Skupni volumen:{' '}
+              {workout.total_volume_kg} kg.
+            </p>
+          )}
           <ol>
             {workout.program_snapshot.map((item) => (
               <li key={item.position}>
@@ -269,6 +278,23 @@ export function Workouts({ api }: { api: Api }) {
               busy={busy}
               save={(reps, weight) => save(reps, weight)}
             />
+          )}
+          {!workout.completed_at && (
+            <button
+              disabled={busy || workout.workout_sets.length === 0}
+              onClick={() =>
+                void mutate(async () => {
+                  const result = await api<WorkoutSession>(
+                    `/sessions/${workout.id}/complete`,
+                    'POST',
+                  );
+                  setNotice(`Trening je zaključen. Skupni volumen: ${result.total_volume_kg} kg.`);
+                  setEditing('');
+                })
+              }
+            >
+              Zaključi trening
+            </button>
           )}
         </article>
       )}

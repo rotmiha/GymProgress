@@ -6,10 +6,11 @@ uporabniški račun in sestavljanje ter urejanje lastnih programov iz kataloga v
 **US-03** doda povabila ter potrjene povezave trenerja in stranke.
 **US-04** omogoči dodelitev lastnega programa povezani stranki in njen pregled programov.
 **US-05** omogoči začetek lastnega treninga ter vnos, popravek in brisanje serij.
+**US-06** zaključi trening in izračuna skupni volumen v kg.
 
 ## Lokalni zagon
 
-Potrebujete **Node.js 22.12 ali novejši**, npm in gostovani projekt Supabase.
+Potrebujete **Node.js 20.19 ali Node.js 22.12 ali novejši**, npm in gostovani projekt Supabase.
 Lokalna podatkovna baza ni potrebna.
 
 1. V Supabase SQL Editorju izvedite [migracijo US-01](supabase/migrations/202611100001_us01_auth.sql).
@@ -19,6 +20,7 @@ Lokalna podatkovna baza ni potrebna.
    Za povezave izvedite `supabase/migrations/202611100004_connections.sql`.
    Za dodelitve izvedite `supabase/migrations/202611100005_assignments.sql`.
    Za treninge izvedite `supabase/migrations/202611100006_workouts.sql`.
+   Za zaključek izvedite `supabase/migrations/202611100007_complete_workout.sql`.
    Namenjena je svežemu projektu brez aplikacijske tabele `public.users`.
    Obstoječih Auth uporabnikov ne uvaža; za preverjanje ustvarite nove račune.
 2. V nastavitvah **Authentication** omogočite e-pošto in geslo. Nastavite
@@ -84,6 +86,11 @@ preverjanje s pravimi računi.
 ## Zaščita podatkov
 
 - Gesla in seje upravlja Supabase Auth; profil ne hrani gesel.
+  `signUp({ email, password })` pošlje geslo prek HTTPS v Supabase Auth, ki
+  uporabi bcrypt z naključno soljo in shrani zgoščeno vrednost v
+  `auth.users.encrypted_password`. Ob prijavi `signInWithPassword` preveri
+  ujemanje; aplikacija ne shranjuje izvirnega gesla ali lastne kopije hasha.
+  [Uradna razlaga shranjevanja gesel](https://supabase.com/docs/guides/auth/password-security).
 - Sprožilec dovoli le začetni vlogi `stranka` in `trener`. Vloga izvira iz
   `public.users`; sprememba uporabniških metapodatkov je ne spremeni.
   Običajni uporabniki nimajo dovoljenja za pisanje profilov.
