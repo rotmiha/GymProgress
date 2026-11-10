@@ -177,146 +177,184 @@ export function App() {
   }
 
   return (
-    <main className={profile ? 'workspace' : undefined}>
-      <section aria-label="Uporabniški račun">
-        <p>GymProgress</p>
-        <h1>{session ? 'Moj račun' : register ? 'Ustvarite račun' : 'Dobrodošli nazaj'}</h1>
-        {!supabase ? (
-          <p role="alert">
-            Za zagon nastavite Supabase v datoteki frontend/.env po navodilih README.
-          </p>
-        ) : !ready ? (
-          <p role="status">Preverjanje seje …</p>
-        ) : (
-          <>
-            {error && <p role="alert">{error}</p>}
-            {notice && <p role="status">{notice}</p>}
-            {session ? (
-              <>
-                {profile ? (
-                  <dl>
-                    <dt>Ime</dt>
-                    <dd>{profile.ime || '—'}</dd>
-                    <dt>Priimek</dt>
-                    <dd>{profile.priimek || '—'}</dd>
-                    <dt>E-naslov</dt>
-                    <dd>{profile.email}</dd>
-                    <dt>Vloga</dt>
-                    <dd>{profile.role}</dd>
-                  </dl>
-                ) : error ? (
-                  <button onClick={() => setReload((value) => value + 1)}>
-                    Ponovno naloži profil
-                  </button>
-                ) : (
-                  <p role="status">Nalaganje profila …</p>
-                )}
-                <button onClick={signOut} disabled={busy}>
-                  {busy ? 'Odjava …' : 'Odjava'}
-                </button>
-                {profile && (
-                  <Dashboard token={session.access_token} userId={profile.id} role={profile.role} />
-                )}
-              </>
-            ) : (
-              <>
-                <p>
-                  {register
-                    ? 'Izberite vlogo in začnite z lastnim računom.'
-                    : 'Prijavite se za varen dostop do svojih podatkov.'}
-                </p>
-                <form onSubmit={submit} noValidate>
-                  {register && (
-                    <>
-                      <div>
-                        <label htmlFor="ime">Ime</label>
-                        <input
-                          id="ime"
-                          autoComplete="given-name"
-                          required
-                          maxLength={100}
-                          value={ime}
-                          onChange={(event) => setIme(event.target.value)}
-                          disabled={busy}
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="priimek">Priimek</label>
-                        <input
-                          id="priimek"
-                          autoComplete="family-name"
-                          required
-                          maxLength={100}
-                          value={priimek}
-                          onChange={(event) => setPriimek(event.target.value)}
-                          disabled={busy}
-                        />
-                      </div>
-                    </>
+    <>
+      {profile && (
+        <header className="app-header">
+          <span className="app-brand">GymProgress</span>
+          <div className="account-menu">
+            <details>
+              <summary>
+                {[profile.ime, profile.priimek].filter(Boolean).join(' ') ||
+                  profile.email ||
+                  'Moj račun'}{' '}
+                ·{' '}
+                {(
+                  {
+                    stranka: 'Stranka',
+                    trener: 'Trener',
+                    administrator: 'Administrator',
+                    client: 'Stranka',
+                    trainer: 'Trener',
+                  } as Record<string, string>
+                )[profile.role?.trim()] ?? profile.role?.trim()}
+              </summary>
+              <dl>
+                <dt>Ime</dt>
+                <dd>{profile.ime || '—'}</dd>
+                <dt>Priimek</dt>
+                <dd>{profile.priimek || '—'}</dd>
+                <dt>E-naslov</dt>
+                <dd>{profile.email}</dd>
+                <dt>Vloga</dt>
+                <dd>{profile.role}</dd>
+              </dl>
+            </details>
+            <button className="secondary" onClick={signOut} disabled={busy}>
+              {busy ? 'Odjava …' : 'Odjava'}
+            </button>
+          </div>
+        </header>
+      )}
+      <main className={profile ? 'workspace' : undefined}>
+        <section className={profile ? 'app-content' : 'auth-card'} aria-label="Uporabniški račun">
+          {!profile && (
+            <>
+              <p>GymProgress</p>
+              <h1>{session ? 'Moj račun' : register ? 'Ustvarite račun' : 'Dobrodošli nazaj'}</h1>
+            </>
+          )}
+          {!supabase ? (
+            <p role="alert">
+              Za zagon nastavite Supabase v datoteki frontend/.env po navodilih README.
+            </p>
+          ) : !ready ? (
+            <p role="status">Preverjanje seje …</p>
+          ) : (
+            <>
+              {error && <p role="alert">{error}</p>}
+              {notice && <p role="status">{notice}</p>}
+              {session ? (
+                <>
+                  {profile ? null : error ? (
+                    <button onClick={() => setReload((value) => value + 1)}>
+                      Ponovno naloži profil
+                    </button>
+                  ) : (
+                    <p role="status">Nalaganje profila …</p>
                   )}
-                  <div>
-                    <label htmlFor="email">E-naslov</label>
-                    <input
-                      id="email"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      disabled={busy}
+                  {!profile && (
+                    <button onClick={signOut} disabled={busy}>
+                      {busy ? 'Odjava …' : 'Odjava'}
+                    </button>
+                  )}
+                  {profile && (
+                    <Dashboard
+                      token={session.access_token}
+                      userId={profile.id}
+                      role={profile.role}
                     />
-                  </div>
-                  <div>
-                    <label htmlFor="password">Geslo</label>
-                    <input
-                      id="password"
-                      type="password"
-                      autoComplete={register ? 'new-password' : 'current-password'}
-                      minLength={8}
-                      required
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)}
-                      disabled={busy}
-                      aria-describedby="password-help"
-                    />
-                    <small id="password-help">Najmanj 8 znakov.</small>
-                  </div>
-                  {register && (
+                  )}
+                </>
+              ) : (
+                <>
+                  <p>
+                    {register
+                      ? 'Izberite vlogo in začnite z lastnim računom.'
+                      : 'Prijavite se za varen dostop do svojih podatkov.'}
+                  </p>
+                  <form onSubmit={submit} noValidate>
+                    {register && (
+                      <>
+                        <div>
+                          <label htmlFor="ime">Ime</label>
+                          <input
+                            id="ime"
+                            autoComplete="given-name"
+                            required
+                            maxLength={100}
+                            value={ime}
+                            onChange={(event) => setIme(event.target.value)}
+                            disabled={busy}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="priimek">Priimek</label>
+                          <input
+                            id="priimek"
+                            autoComplete="family-name"
+                            required
+                            maxLength={100}
+                            value={priimek}
+                            onChange={(event) => setPriimek(event.target.value)}
+                            disabled={busy}
+                          />
+                        </div>
+                      </>
+                    )}
                     <div>
-                      <label htmlFor="role">Vloga</label>
-                      <select
-                        id="role"
+                      <label htmlFor="email">E-naslov</label>
+                      <input
+                        id="email"
+                        type="email"
+                        autoComplete="email"
                         required
-                        value={role}
-                        onChange={(event) => setRole(event.target.value)}
+                        value={email}
+                        onChange={(event) => setEmail(event.target.value)}
                         disabled={busy}
-                      >
-                        <option value="">Izberite vlogo</option>
-                        <option value="stranka">Stranka</option>
-                        <option value="trener">Trener</option>
-                      </select>
+                      />
                     </div>
-                  )}
-                  <button type="submit" disabled={busy}>
-                    {busy ? 'Počakajte …' : register ? 'Registracija' : 'Prijava'}
+                    <div>
+                      <label htmlFor="password">Geslo</label>
+                      <input
+                        id="password"
+                        type="password"
+                        autoComplete={register ? 'new-password' : 'current-password'}
+                        minLength={8}
+                        required
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}
+                        disabled={busy}
+                        aria-describedby="password-help"
+                      />
+                      <small id="password-help">Najmanj 8 znakov.</small>
+                    </div>
+                    {register && (
+                      <div>
+                        <label htmlFor="role">Vloga</label>
+                        <select
+                          id="role"
+                          required
+                          value={role}
+                          onChange={(event) => setRole(event.target.value)}
+                          disabled={busy}
+                        >
+                          <option value="">Izberite vlogo</option>
+                          <option value="stranka">Stranka</option>
+                          <option value="trener">Trener</option>
+                        </select>
+                      </div>
+                    )}
+                    <button type="submit" disabled={busy}>
+                      {busy ? 'Počakajte …' : register ? 'Registracija' : 'Prijava'}
+                    </button>
+                  </form>
+                  <button
+                    disabled={busy}
+                    onClick={() => {
+                      setRegister(!register);
+                      setPassword('');
+                      setError('');
+                      setNotice('');
+                    }}
+                  >
+                    {register ? 'Že imate račun? Prijavite se' : 'Nimate računa? Registrirajte se'}
                   </button>
-                </form>
-                <button
-                  disabled={busy}
-                  onClick={() => {
-                    setRegister(!register);
-                    setPassword('');
-                    setError('');
-                    setNotice('');
-                  }}
-                >
-                  {register ? 'Že imate račun? Prijavite se' : 'Nimate računa? Registrirajte se'}
-                </button>
-              </>
-            )}
-          </>
-        )}
-      </section>
-    </main>
+                </>
+              )}
+            </>
+          )}
+        </section>
+      </main>
+    </>
   );
 }

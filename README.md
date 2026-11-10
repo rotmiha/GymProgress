@@ -20,6 +20,7 @@ Lokalna podatkovna baza ni potrebna.
    Za treninge izvedite `supabase/migrations/202611100006_workouts.sql`.
    Za zaključek izvedite `supabase/migrations/202611100007_complete_workout.sql`.
    Za rekorde izvedite `supabase/migrations/202611100008_personal_records.sql`.
+   Za združljivost starih vlog izvedite `supabase/migrations/202611100009_legacy_role_compatibility.sql`.
    Migracije izvajajte po vrstnem redu in vsako samo enkrat. Če je del že izveden,
    izvedite samo preostale datoteke. Popravek v `supabase/repairs` je ločen in ponovljiv.
    Namenjena je svežemu projektu brez aplikacijske tabele `public.users`.
@@ -128,9 +129,23 @@ preverjanje s pravimi računi.
 ## Programi in treningi
 
 Po prijavi so na voljo zavihki Programi, Povezave, Dodelitve in Treningi.
-Katalog vsebuje šest začetnih vaj iz migracije 0003. Program in njegove vaje
-se shranijo atomarno. Lastnik lahko program spreminja, prejemnik dodelitve pa
-ga lahko uporablja za svoje treninge.
+Katalog bere obstoječe zapise iz `public.exercises`, vključno z vašimi imeni,
+mišičnimi skupinami in opremo. Migracija 0003 doda začetni nabor samo ob prvi
+pripravi nove baze. Obstoječih tabel zaradi dodajanja vaj ne ustvarjajte ponovno.
+Če SQL Editor vidi vaje, aplikacija pa vrne prazen seznam, izvedite
+`supabase/repairs/catalog_access.sql`. Popravek uredi samo pravice branja in ne
+spreminja nobene vaje. Program in njegove vaje se shranijo atomarno; lastnik
+ga lahko spreminja, prejemnik dodelitve pa uporablja za svoje treninge.
+
+Katalog je mogoče iskati po imenu, mišični skupini in opremi ter dodatno filtrirati
+po mišični skupini in opremi. Filtri izhajajo iz dejanskih vrednosti v bazi in ne
+spreminjajo zapisov. Števec pokaže število ujemanj, Počisti filtre pa obnovi celoten seznam.
+
+Migracija 0009 v preverjanju pravic enotno obravnava tudi stare vloge `client`
+in `trainer` (vključno s presledki iz stolpca CHAR). Bere jih iz zaščitenega
+profila; uporabniški metapodatki ne dajejo pravic. Računov, povezav ali vaj ne
+spreminja. Program lahko ustvari stranka ali trener, dodeli pa ga lahko le trener
+potrjeni stranki. Po izvedbi migracije osvežite stran, da API vrne enotno vlogo.
 
 Trening shrani posnetek programa. Serije lahko ureja samo lastnik in samo pred
 zaključkom; potrjen trener ima bralni dostop prek API-ja. Zaključek zaklene
@@ -146,6 +161,24 @@ pravila veljajo tudi za neposredne klice Supabase RPC.
 
 [Ročno preverjanje US-02 do US-07](docs/08-preverjanje-mvp.md) dopolnjuje
 avtomatizirane preizkuse PostgreSQL, API-ja in obrazcev.
+
+## Preverjanje UI po wireframe-ih
+
+```powershell
+npx playwright install chromium
+npm run test:ui
+```
+
+Playwright zažene ločen frontend na vratih 4173. Uporablja izmišljene račune in
+prestrezanje zahtev samo v testnem brskalniku; ne bere ali spreminja vašega
+Supabase projekta. Preveri katalog in vrstni red vaj (WF-01), sprejem povabila
+(WF-02), pregled pred dodelitvijo (WF-03), mobilno širino ter kombiniranje in
+ponastavitev filtrov kataloga. Posnetki zaslona
+so v `test-results/`. Dejanska aplikacija še naprej bere podatke iz Supabase.
+
+Pri omrežni napaki `AUTH_UNAVAILABLE` pot `/api/health/auth` vrne dosegljivost
+Supabase iz dejansko zagnanega API procesa. Odgovor vsebuje status in omrežno
+kodo, ne vsebuje gesel ali žetonov.
 
 ## Dokumentacija
 

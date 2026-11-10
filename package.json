@@ -13,10 +13,12 @@
     "build": "npm run build --workspaces",
     "test": "vitest run",
     "typecheck": "npm run typecheck --workspaces",
-    "format": "prettier --write \".prettierrc.json\" \"package.json\" \"{frontend,backend}/**/*.{ts,tsx,css,html,json}\"",
-    "format:check": "prettier --check \".prettierrc.json\" \"package.json\" \"{frontend,backend}/**/*.{ts,tsx,css,html,json}\""
+    "format": "prettier --write \".prettierrc.json\" \"package.json\" \"{frontend,backend}/**/*.{ts,tsx,css,html,json}\" \"playwright.config.ts\" \"e2e/**/*.ts\"",
+    "format:check": "prettier --check \".prettierrc.json\" \"package.json\" \"{frontend,backend}/**/*.{ts,tsx,css,html,json}\" \"playwright.config.ts\" \"e2e/**/*.ts\"",
+    "test:ui": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "concurrently": "^9.2.1",
     "prettier": "^3.9.10",
     "typescript": "^5.9.3",

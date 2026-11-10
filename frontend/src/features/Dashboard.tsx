@@ -18,7 +18,7 @@ export function Dashboard({
   const api = useMemo(() => createApi(token), [token]);
   return (
     <div className="dashboard">
-      <nav aria-label="Funkcionalnosti">
+      <nav className="main-nav" aria-label="Funkcionalnosti">
         <button
           className="secondary"
           aria-pressed={tab === 'programs'}

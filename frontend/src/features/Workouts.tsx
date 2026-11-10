@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { type Api, errorMessage } from './api';
+import { PageHeading } from './PageHeading';
 import type { Program, WorkoutSession, WorkoutSet } from './types';
 
 function SetForm({
@@ -145,177 +146,197 @@ export function Workouts({ api }: { api: Api }) {
     });
   }
   return (
-    <div>
-      <h2>Moji treningi</h2>
+    <>
+      <PageHeading
+        title="Moji treningi"
+        description="Začni trening iz programa, beleži opravljene serije in spremljaj osebne rekorde."
+        actions={
+          <button className="secondary" disabled={busy} onClick={() => void mutate(async () => {})}>
+            Osveži treninge
+          </button>
+        }
+      />
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
-      <button className="secondary" disabled={busy} onClick={() => void mutate(async () => {})}>
-        Osveži treninge
-      </button>
-      <form onSubmit={start}>
-        <fieldset disabled={busy}>
-          <div>
-            <label htmlFor="workout-program">Program za trening</label>
+      <div className="panel-grid workout-layout">
+        <aside className="panel">
+          <h2>Nov trening</h2>
+          <form onSubmit={start}>
+            <fieldset disabled={busy}>
+              <div>
+                <label htmlFor="workout-program">Program za trening</label>
+                <select
+                  id="workout-program"
+                  required
+                  value={program}
+                  onChange={(event) => {
+                    setProgram(event.target.value);
+                    setRequestId(crypto.randomUUID());
+                  }}
+                >
+                  <option value="">Izberite program</option>
+                  {programs.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button disabled={!program}>Začni trening</button>
+            </fieldset>
+          </form>
+          {!sessions.length && <p>Ni začetih treningov.</p>}
+          {sessions.map((item) => (
+            <article className="workout-card" key={item.id}>
+              <h3>{item.program_name}</h3>
+              <p>
+                {new Date(item.started_at).toLocaleString('sl-SI')} —{' '}
+                {item.completed_at ? 'Zaključen' : 'V teku'}
+              </p>
+              <button
+                className="secondary"
+                disabled={busy}
+                onClick={() => {
+                  setActive(item.id);
+                  setPosition(1);
+                  setEditing('');
+                  setError('');
+                }}
+              >
+                Odpri trening
+              </button>
+            </article>
+          ))}
+        </aside>
+        {workout ? (
+          <article className="panel workout-detail" aria-label="Izbrani trening">
+            <h3>{workout.program_name}</h3>
+            {workout.completed_at && (
+              <p>
+                Zaključeno: {new Date(workout.completed_at).toLocaleString('sl-SI')}. Skupni
+                volumen: {workout.total_volume_kg} kg.
+              </p>
+            )}
+            {(workout.workout_records ?? []).length > 0 && (
+              <div aria-label="Osebni rekordi">
+                <h3>Novi osebni rekordi</h3>
+                <ul>
+                  {workout.workout_records?.map((record) => (
+                    <li key={record.id}>
+                      <strong>
+                        {record.exercises.name}: {record.weight_kg} kg
+                      </strong>{' '}
+                      —{' '}
+                      {record.previous_weight_kg === null
+                        ? 'prvi zabeleženi rezultat'
+                        : `prej ${record.previous_weight_kg} kg`}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <ol>
+              {workout.program_snapshot.map((item) => (
+                <li key={item.position}>
+                  {item.name}: načrt {item.target_sets} × {item.target_reps}
+                </li>
+              ))}
+            </ol>
+            <label htmlFor="workout-exercise">Vaja</label>
             <select
-              id="workout-program"
-              required
-              value={program}
+              id="workout-exercise"
+              value={position}
+              disabled={busy}
               onChange={(event) => {
-                setProgram(event.target.value);
-                setRequestId(crypto.randomUUID());
+                setPosition(Number(event.target.value));
+                setEditing('');
               }}
             >
-              <option value="">Izberite program</option>
-              {programs.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
+              {workout.program_snapshot.map((item) => (
+                <option key={item.position} value={item.position}>
+                  {item.position}. {item.name}
                 </option>
               ))}
             </select>
-          </div>
-          <button disabled={!program}>Začni trening</button>
-        </fieldset>
-      </form>
-      {!sessions.length && <p>Ni začetih treningov.</p>}
-      {sessions.map((item) => (
-        <article key={item.id}>
-          <h3>{item.program_name}</h3>
-          <p>
-            {new Date(item.started_at).toLocaleString('sl-SI')} —{' '}
-            {item.completed_at ? 'Zaključen' : 'V teku'}
-          </p>
-          <button
-            className="secondary"
-            disabled={busy}
-            onClick={() => {
-              setActive(item.id);
-              setPosition(1);
-              setEditing('');
-              setError('');
-            }}
-          >
-            Odpri trening
-          </button>
-        </article>
-      ))}
-      {workout && (
-        <article aria-label="Izbrani trening">
-          <h3>{workout.program_name}</h3>
-          {workout.completed_at && (
-            <p>
-              Zaključeno: {new Date(workout.completed_at).toLocaleString('sl-SI')}. Skupni volumen:{' '}
-              {workout.total_volume_kg} kg.
+            {exercise && <h3>Opravljene serije — {exercise.name}</h3>}
+            {workout.workout_sets
+              .filter((item) => item.exercise_position === position)
+              .sort((a, b) => a.set_number - b.set_number)
+              .map((item) => (
+                <article key={item.id}>
+                  <p>
+                    Serija {item.set_number}: {item.reps} ponovitev × {item.weight_kg} kg
+                  </p>
+                  {!workout.completed_at &&
+                    (editing === item.id ? (
+                      <SetForm
+                        key={item.id}
+                        value={item}
+                        busy={busy}
+                        save={(reps, weight) => save(reps, weight, item)}
+                        cancel={() => setEditing('')}
+                      />
+                    ) : (
+                      <div className="actions">
+                        <button
+                          className="secondary"
+                          disabled={busy}
+                          onClick={() => setEditing(item.id)}
+                        >
+                          Uredi serijo {item.set_number}
+                        </button>
+                        <button
+                          className="secondary"
+                          disabled={busy}
+                          onClick={() =>
+                            void mutate(() =>
+                              api(`/sessions/${workout.id}/sets/${item.id}`, 'DELETE'),
+                            )
+                          }
+                        >
+                          Izbriši serijo {item.set_number}
+                        </button>
+                      </div>
+                    ))}
+                </article>
+              ))}
+            {!workout.completed_at && (
+              <SetForm
+                key={`${workout.id}-${position}`}
+                busy={busy}
+                save={(reps, weight) => save(reps, weight)}
+              />
+            )}
+            {!workout.completed_at && (
+              <button
+                disabled={busy || workout.workout_sets.length === 0}
+                onClick={() =>
+                  void mutate(async () => {
+                    const result = await api<WorkoutSession>(
+                      `/sessions/${workout.id}/complete`,
+                      'POST',
+                    );
+                    setNotice(
+                      `Trening je zaključen. Skupni volumen: ${result.total_volume_kg} kg.`,
+                    );
+                    setEditing('');
+                  })
+                }
+              >
+                Zaključi trening
+              </button>
+            )}
+          </article>
+        ) : (
+          <section className="panel">
+            <h2>Izbrani trening</h2>
+            <p className="empty-state">
+              Začni nov trening ali odpri že začetega. Tukaj se prikažejo njegove vaje in opravljene
+              serije.
             </p>
-          )}
-          {(workout.workout_records ?? []).length > 0 && (
-            <div aria-label="Osebni rekordi">
-              <h3>Novi osebni rekordi</h3>
-              <ul>
-                {workout.workout_records?.map((record) => (
-                  <li key={record.id}>
-                    <strong>
-                      {record.exercises.name}: {record.weight_kg} kg
-                    </strong>{' '}
-                    —{' '}
-                    {record.previous_weight_kg === null
-                      ? 'prvi zabeleženi rezultat'
-                      : `prej ${record.previous_weight_kg} kg`}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <ol>
-            {workout.program_snapshot.map((item) => (
-              <li key={item.position}>
-                {item.name}: načrt {item.target_sets} × {item.target_reps}
-              </li>
-            ))}
-          </ol>
-          <label htmlFor="workout-exercise">Vaja</label>
-          <select
-            id="workout-exercise"
-            value={position}
-            disabled={busy}
-            onChange={(event) => {
-              setPosition(Number(event.target.value));
-              setEditing('');
-            }}
-          >
-            {workout.program_snapshot.map((item) => (
-              <option key={item.position} value={item.position}>
-                {item.position}. {item.name}
-              </option>
-            ))}
-          </select>
-          {exercise && <h3>Opravljene serije — {exercise.name}</h3>}
-          {workout.workout_sets
-            .filter((item) => item.exercise_position === position)
-            .sort((a, b) => a.set_number - b.set_number)
-            .map((item) => (
-              <article key={item.id}>
-                <p>
-                  Serija {item.set_number}: {item.reps} ponovitev × {item.weight_kg} kg
-                </p>
-                {!workout.completed_at &&
-                  (editing === item.id ? (
-                    <SetForm
-                      key={item.id}
-                      value={item}
-                      busy={busy}
-                      save={(reps, weight) => save(reps, weight, item)}
-                      cancel={() => setEditing('')}
-                    />
-                  ) : (
-                    <div className="actions">
-                      <button
-                        className="secondary"
-                        disabled={busy}
-                        onClick={() => setEditing(item.id)}
-                      >
-                        Uredi serijo {item.set_number}
-                      </button>
-                      <button
-                        className="secondary"
-                        disabled={busy}
-                        onClick={() =>
-                          void mutate(() =>
-                            api(`/sessions/${workout.id}/sets/${item.id}`, 'DELETE'),
-                          )
-                        }
-                      >
-                        Izbriši serijo {item.set_number}
-                      </button>
-                    </div>
-                  ))}
-              </article>
-            ))}
-          {!workout.completed_at && (
-            <SetForm
-              key={`${workout.id}-${position}`}
-              busy={busy}
-              save={(reps, weight) => save(reps, weight)}
-            />
-          )}
-          {!workout.completed_at && (
-            <button
-              disabled={busy || workout.workout_sets.length === 0}
-              onClick={() =>
-                void mutate(async () => {
-                  const result = await api<WorkoutSession>(
-                    `/sessions/${workout.id}/complete`,
-                    'POST',
-                  );
-                  setNotice(`Trening je zaključen. Skupni volumen: ${result.total_volume_kg} kg.`);
-                  setEditing('');
-                })
-              }
-            >
-              Zaključi trening
-            </button>
-          )}
-        </article>
-      )}
-    </div>
+          </section>
+        )}
+      </div>
+    </>
   );
 }

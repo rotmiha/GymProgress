@@ -1,5 +1,10 @@
 # GymProgress – wireframe-i
 
+Implementacija ohranja sivinsko oblikovanje, zgornjo glavo in navigacijo ter
+dvostolpčno razporeditev teh osnutkov. Na ozkih zaslonih se stolpca postavita
+navpično, tabela vaj pa se po potrebi pomika vodoravno. Podatki v aplikaciji
+izhajajo iz uporabnikove baze; primeri v wireframe-ih so ilustrativni.
+
 ## WF-01 – Sestavljanje programa
 
 **Vloga:** trener; enak obrazec lahko za svoj program uporablja stranka.  

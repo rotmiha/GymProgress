@@ -11,7 +11,14 @@ const projectId = createHash('sha256')
   .slice(0, 12);
 
 export default defineConfig({
-  cacheDir: join(tmpdir(), 'gymprogress-vite', projectId),
+  cacheDir: join(
+    tmpdir(),
+    'gymprogress-vite',
+    projectId,
+    process.env.GYMPROGRESS_UI_TEST === '1' ? 'ui-test' : 'dev',
+    'node_modules',
+    '.vite',
+  ),
   plugins: [react()],
   server: { proxy: { '/api': 'http://127.0.0.1:3001' } },
 });

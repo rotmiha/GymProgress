@@ -49,7 +49,9 @@ it('pred dodelitvijo zahteva pregled programa in prejemnika', async () => {
   });
   fireEvent.click(screen.getByRole('button', { name: 'Preglej dodelitev' }));
   expect(screen.getByText(/Prejemnik: Ana Novak/)).toBeInTheDocument();
-  expect(screen.getByText(/Počep — 3 × 10/)).toBeInTheDocument();
+  expect(screen.getByRole('cell', { name: '1. Počep' })).toBeInTheDocument();
+  expect(screen.getByRole('cell', { name: '3' })).toBeInTheDocument();
+  expect(screen.getByRole('cell', { name: '10' })).toBeInTheDocument();
   expect(api.mock.calls.some(([, method]) => method === 'POST')).toBe(false);
   fireEvent.click(screen.getByRole('button', { name: 'Potrdi dodelitev' }));
   await screen.findByText('Program je dodeljen stranki.');
