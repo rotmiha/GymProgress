@@ -5,6 +5,7 @@ Implementirani sta **US-01 – Registracija in prijava** ter **US-02 – Program
 uporabniški račun in sestavljanje ter urejanje lastnih programov iz kataloga vaj.
 **US-03** doda povabila ter potrjene povezave trenerja in stranke.
 **US-04** omogoči dodelitev lastnega programa povezani stranki in njen pregled programov.
+**US-05** omogoči začetek lastnega treninga ter vnos, popravek in brisanje serij.
 
 ## Lokalni zagon
 
@@ -17,6 +18,7 @@ Lokalna podatkovna baza ni potrebna.
    Za programe nato izvedite še `supabase/migrations/202611100003_programs.sql`.
    Za povezave izvedite `supabase/migrations/202611100004_connections.sql`.
    Za dodelitve izvedite `supabase/migrations/202611100005_assignments.sql`.
+   Za treninge izvedite `supabase/migrations/202611100006_workouts.sql`.
    Namenjena je svežemu projektu brez aplikacijske tabele `public.users`.
    Obstoječih Auth uporabnikov ne uvaža; za preverjanje ustvarite nove račune.
 2. V nastavitvah **Authentication** omogočite e-pošto in geslo. Nastavite
