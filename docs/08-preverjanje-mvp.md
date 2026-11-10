@@ -15,3 +15,11 @@ Naloge se zaprejo po združitvi njihovih sprememb v `main`.
 
 Avtomatizirani testi izvajajo migracije, RPC in RLS v PostgreSQL (PGlite).
 Preverjanje na gostovanem Supabase z resničnimi računi je ločen ročni korak.
+
+## US-03 – povezave (#7, #8)
+
+- Kot trener pošljite povabilo obstoječi stranki po e-naslovu.
+- Podatki stranke pred sprejemom niso dostopni prek `/api/clients/:id`.
+- Kot stranka v ločenem brskalniku povabilo sprejmite ali zavrnite.
+- Po sprejemu trener lahko prebere profil. Po zavrnitvi ga ne more.
+- Nepovezan trener in druga stranka ne moreta sprejeti tujega povabila.
