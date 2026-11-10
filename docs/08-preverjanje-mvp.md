@@ -12,6 +12,10 @@ Naloge se zaprejo po združitvi njihovih sprememb v `main`.
 - Dodajte več vaj, zamenjajte vrstni red z Gor/Dol in eno odstranite.
 - Shranite, osvežite stran in uredite obstoječ program.
 - Drugi račun ne vidi ali spreminja vašega programa.
+- Katalog filtrirajte po mišični skupini in opremi, dodajte še iskalni izraz
+  ter preverite števec in ponastavitev. Imena in podatki vaj ostanejo iz Supabase.
+- Pri obstoječi bazi s starima vlogama client/trainer izvedite migracijo 0009;
+  oba uporabnika lahko ustvarita lasten program, dodelitev pa ostane trenerjevo dejanje.
 
 Avtomatizirani testi izvajajo migracije, RPC in RLS v PostgreSQL (PGlite).
 Preverjanje na gostovanem Supabase z resničnimi računi je ločen ročni korak.

@@ -10,9 +10,10 @@ function setup(
     dbError?: boolean;
     offline?: boolean;
     authUnavailable?: boolean;
+    role?: string;
   } = {},
 ) {
-  const profile = { id: 'user-a', email: 'a@example.com', role: 'stranka' };
+  const profile = { id: 'user-a', email: 'a@example.com', role: options.role ?? 'stranka' };
   const eq = vi.fn().mockReturnValue({
     maybeSingle: async () => ({
       data: options.missing ? null : profile,
@@ -36,6 +37,15 @@ function setup(
 }
 
 describe('US-01 zaščiten API', () => {
+  it.each([
+    ['client    ', 'stranka'],
+    ['trainer   ', 'trener'],
+  ])('vrne enotno vlogo iz starega profila %s', async (role, expected) => {
+    const { app } = setup({ role });
+    const response = await request(app).get('/api/me').auth('valid', { type: 'bearer' });
+    expect(response.status).toBe(200);
+    expect(response.body.role).toBe(expected);
+  });
   it.each([undefined, 'Basic abc', 'Bearer ', 'Bearer a b'])(
     'zavrne manjkajočo ali napačno avtentikacijo: %s',
     async (header) => {

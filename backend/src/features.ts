@@ -9,6 +9,14 @@ export function databaseResponse(
   if (result.error) {
     const code = result.error.code ?? '';
     const forbidden = code === '42501';
+    const schemaMissing = [
+      'PGRST202',
+      'PGRST200',
+      'PGRST204',
+      'PGRST205',
+      '42P01',
+      '42883',
+    ].includes(code);
     const invalid = code.startsWith('22') || code.startsWith('23') || code === 'P0001';
     res.status(forbidden ? 403 : invalid ? 400 : 503).json({
       error:
@@ -16,7 +24,10 @@ export function databaseResponse(
           ? result.error.message
           : invalid
             ? 'Preverite vnesene podatke in izbrane zapise.'
-            : 'Podatkov trenutno ni mogoče obdelati.',
+            : schemaMissing
+              ? 'Podatkovna baza še ni posodobljena za to dejanje.'
+              : 'Podatkov trenutno ni mogoče obdelati.',
+      code: code || 'DATABASE_UNAVAILABLE',
     });
   } else {
     res.status(status).json(result.data);

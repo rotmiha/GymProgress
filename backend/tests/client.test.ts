@@ -1,7 +1,35 @@
 import { afterEach, expect, it, vi } from 'vitest';
-import { createBackendClient } from '../src/supabase';
+import { clientTransportDiagnostic, createBackendClient } from '../src/supabase';
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+});
+
+it('ohrani izvorno omrežno kodo pri zavrnjeni povezavi brez izpisa žetona', async () => {
+  vi.spyOn(console, 'error').mockImplementation(() => {});
+  vi.stubGlobal(
+    'fetch',
+    vi
+      .fn()
+      .mockRejectedValue(
+        Object.assign(new Error('fetch failed'), { cause: { code: 'ECONNRESET' } }),
+      ),
+  );
+  const client = createBackendClient(
+    'https://example.supabase.co',
+    'test-public-key',
+    'test-token',
+  );
+  const { error } = await client.auth.getUser('test-token');
+  expect(error?.status).toBe(0);
+  expect(clientTransportDiagnostic(client)).toEqual({
+    network_error: 'ECONNRESET',
+    response_status: null,
+    response_type: null,
+  });
+  await client.removeAllChannels();
+});
 
 it('ustvari dejanski Supabase odjemalec tudi brez native WebSocket na Node.js 20', async () => {
   const client = createBackendClient(

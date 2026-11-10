@@ -2,8 +2,13 @@ import express from 'express';
 import helmet from 'helmet';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { featureRoutes } from './features.js';
+import { clientTransportDiagnostic } from './supabase.js';
+import { applicationRole } from './roles.js';
 
-export function createApp(clientForToken: (token: string) => SupabaseClient) {
+export function createApp(
+  clientForToken: (token: string) => SupabaseClient,
+  authHealth?: () => Promise<{ reachable: boolean }>,
+) {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
@@ -13,6 +18,14 @@ export function createApp(clientForToken: (token: string) => SupabaseClient) {
   });
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
+  });
+  app.get('/api/health/auth', async (_req, res) => {
+    if (!authHealth) {
+      res.status(503).json({ reachable: false });
+      return;
+    }
+    const result = await authHealth();
+    res.status(result.reachable ? 200 : 503).json(result);
   });
   app.use(express.json({ limit: '64kb' }));
   app.use('/api', async (req, res, next) => {
@@ -29,12 +42,10 @@ export function createApp(clientForToken: (token: string) => SupabaseClient) {
       } = await client.auth.getUser(match[1]);
       if (error || !user) {
         if (error?.status === 429) {
-          res
-            .status(429)
-            .json({
-              error: 'Preveč preverjanj prijave. Počakajte in poskusite znova.',
-              code: 'AUTH_RATE_LIMITED',
-            });
+          res.status(429).json({
+            error: 'Preveč preverjanj prijave. Počakajte in poskusite znova.',
+            code: 'AUTH_RATE_LIMITED',
+          });
           return;
         }
         const unavailable =
@@ -49,6 +60,7 @@ export function createApp(clientForToken: (token: string) => SupabaseClient) {
           code: unavailable ? 'AUTH_UNAVAILABLE' : 'AUTH_SESSION_INVALID',
           upstream_status: error?.status ?? null,
           upstream_code: error?.code ?? null,
+          transport: unavailable ? clientTransportDiagnostic(client) : undefined,
         });
         return;
       }
@@ -67,7 +79,7 @@ export function createApp(clientForToken: (token: string) => SupabaseClient) {
         return;
       }
       res.locals.client = client;
-      res.locals.profile = profile;
+      res.locals.profile = { ...profile, role: applicationRole(profile.role) };
       next();
     } catch {
       res.status(503).json({ error: 'Storitev trenutno ni dosegljiva.' });
