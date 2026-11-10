@@ -17,6 +17,7 @@ export function Assignments({ api, role, userId }: { api: Api; role: string; use
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [program, setProgram] = useState('');
   const [client, setClient] = useState('');
+  const [inviteEmail, setInviteEmail] = useState('');
   const [confirm, setConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -67,6 +68,25 @@ export function Assignments({ api, role, userId }: { api: Api; role: string; use
     setError('');
     setNotice('');
     setConfirm(true);
+  }
+
+  async function invite(event: FormEvent) {
+    event.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setError('');
+    setNotice('');
+    try {
+      await api('/connections', 'POST', { email: inviteEmail.trim() });
+      setInviteEmail('');
+      setNotice(
+        'Povabilo je poslano. Ko ga stranka sprejme, klikni »Osveži dodelitve« in jo izberi v seznamu.',
+      );
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -134,6 +154,29 @@ export function Assignments({ api, role, userId }: { api: Api; role: string; use
                 <button type="submit" disabled={!selectedProgram || !selectedClient}>
                   Preglej dodelitev
                 </button>
+              </fieldset>
+            </form>
+            <hr />
+            <h3>Povabi novo stranko</h3>
+            <p className="muted">
+              Vnesi e-naslov njenega obstoječega računa. Pred dodelitvijo mora stranka povabilo
+              sprejeti v zavihku Povezave.
+            </p>
+            <form onSubmit={(event) => void invite(event)}>
+              <fieldset disabled={busy}>
+                <div>
+                  <label htmlFor="assignment-invite-email">E-naslov stranke za povabilo</label>
+                  <input
+                    id="assignment-invite-email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="ime.priimek@example.com"
+                    required
+                    value={inviteEmail}
+                    onChange={(event) => setInviteEmail(event.target.value)}
+                  />
+                </div>
+                <button type="submit">Pošlji povabilo</button>
               </fieldset>
             </form>
           </section>

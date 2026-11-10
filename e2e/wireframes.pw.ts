@@ -158,6 +158,20 @@ test('WF-03: potrjena stranka in pregled pred dodelitvijo', async ({ page }, tes
   });
 });
 
+test('trener povabi stranko z e-naslovom neposredno pri dodelitvah', async ({ page }) => {
+  const { mutations } = await prepare(page);
+  await page.getByRole('button', { name: 'Dodelitve', exact: true }).click();
+  await page.getByLabel('E-naslov stranke za povabilo').fill('nova.stranka@example.com');
+  await page.getByRole('button', { name: 'Pošlji povabilo', exact: true }).click();
+  await expect(page.getByRole('status')).toContainText('Povabilo je poslano.');
+  expect(mutations).toEqual([
+    { path: '/api/connections', method: 'POST', payload: { email: 'nova.stranka@example.com' } },
+  ]);
+  await expect(page.getByLabel('E-naslov stranke za povabilo')).toHaveValue('');
+  await expect(page.getByLabel('Potrjeno povezana stranka').getByRole('option')).toHaveCount(2);
+  await expect(page.getByRole('button', { name: 'Preglej dodelitev' })).toBeDisabled();
+});
+
 test('WF-02: stranka vidi svoje povabilo in ga sprejme', async ({ page }, testInfo) => {
   const { mutations } = await prepare(page, 'stranka');
   await page.getByRole('button', { name: 'Povezave', exact: true }).click();
