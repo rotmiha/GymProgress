@@ -51,9 +51,3 @@ izvajati namesto strežnika.
 * Usklajevati moramo oblike zahtev, odgovorov in napak med frontendom ter
   backendom; sam TypeScript ne preverja prejetega JSON med izvajanjem.
 * Spreminjanje pogodbe zahteva skrb za združljivost vseh odjemalcev.
-
-## Povezave
-
-* Izhodišče: [arhitektura in tehnološki sklad](../04-arhitektura-in-tehnoloski-sklad.md).
-* Prihodnji odjemalec: [kasnejše nadgradnje](../02-funkcionalnosti-in-obseg.md#kasnejše-nadgradnje).
-* Sorodno: [ADR 0003 – Express backend](0003-locen-express-backend.md) in [ADR 0002 – avtentikacija](0002-avtentikacija-supabase-auth.md).

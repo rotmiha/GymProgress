@@ -52,9 +52,3 @@ odtehta dodatnega usklajevanja podvojenih podatkov.
 * Relacijski model sam ne ohrani pretekle različice spremenjenega programa.
   Pred izvedbo US-14 bo treba opredeliti shranjevanje takratnega načrta;
   osnutek modela tega še ne rešuje.
-
-## Povezave
-
-* Izhodišče: [podatkovni model](../03-podatkovni-model.md) in [arhitektura](../04-arhitektura-in-tehnoloski-sklad.md).
-* Zahteve: [US-02, US-04 do US-07 in prihodnja US-14](../05-uporabniske-zgodbe.md).
-* Sorodno: [ADR 0001 – gostovanje baze](0001-gostovana-baza-supabase.md) in [ADR 0006 – izračuni](0006-izracuni-ob-zakljucku-treninga.md).
