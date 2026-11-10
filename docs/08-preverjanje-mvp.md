@@ -1,9 +1,9 @@
 # Preverjanje US-02 do US-07
 
-Vsaka zgodba ima lastno razvojno vejo in PR. Ker se zgodbe navezujejo druga na
-drugo, so veje zaporedne: US-03 izhaja iz US-02, US-04 iz US-03 in tako naprej.
-PR-je pregledujte in združujte v tem vrstnem redu. Naloge se zaprejo po združitvi
-njihovih sprememb v `main`.
+Vsaka zgodba ima lastno razvojno vejo, ustvarjeno iz posodobljenega `main`, in
+PR proti `main`. Po dokončanju in preverjanju zgodbe najprej združite njen PR,
+posodobite lokalni `main` in šele nato ustvarite vejo za naslednjo zgodbo.
+Naloge se zaprejo po združitvi njihovih sprememb v `main`.
 
 ## US-02 – programi (#5, #6)
 
